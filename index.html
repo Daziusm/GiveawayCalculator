@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Giveaway Calculator</title>
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --panel-bg: rgba(11, 11, 11, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.05);
+            --accent-color: #b166ff; /* Neon purple */
+            --alt-accent: #00f0ff; /* Cyan */
+            --text-color: #ffffff; /* Changed from #aaaaaa to white */
+            --header-color: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+            background-color: var(--bg-color);
+            background-image: url('https://steamuserimages-a.akamaihd.net/ugc/1795242553066038788/9288F3EE1D5B9C8660EC469E33D6A60BF1B3BC81/');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+        
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+        
+        a:hover {
+            color: var(--alt-accent);
+            text-shadow: 0 0 5px var(--alt-accent);
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 0 16px;
+        }
+        
+        .transparent-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .tab {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .tab:hover, .tab.active {
+            background-color: rgba(177, 102, 255, 0.1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(177, 102, 255, 0.3);
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            fill: var(--accent-color);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--panel-border);
+            margin-right: 20px;
+            filter: none; /* Removed grayscale filter */
+        }
+        
+        .profile-info {
+            flex-grow: 1;
+        }
+        
+        .username {
+            font-size: 28px;
+            color: var(--header-color);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+        
+        .calculator-content {
+            margin-top: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: var(--header-color);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 8px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--header-color);
+            letter-spacing: 1px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 3px;
+            padding: 10px;
+            color: var(--text-color);
+            font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 5px rgba(177, 102, 255, 0.3);
+        }
+        
+        .neon-button {
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(177, 102, 255, 0.3);
+        }
+        
+        .neon-button:hover {
+            background-color: rgba(177, 102, 255, 0.1);
+            color: var(--alt-accent);
+            border-color: var(--alt-accent);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            text-shadow: 0 0 5px var(--alt-accent);
+        }
+        
+        .warn-box {
+            background-color: rgba(255, 0, 0, 0.1);
+            border-left: 3px solid #ff0055;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .terminal-box {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--panel-border);
+            border-radius: 3px;
+            padding: 15px;
+            font-family: monospace;
+            color: #00ff4c;
+            margin: 15px 0;
+        }
+        
+        .step-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .step-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .step-item:last-child {
+            border-bottom: none;
+        }
+        
+        code {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: var(--alt-accent);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+        
+        /* Content sections */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        #loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(177, 102, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to {transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-message">Calculating...</p>
+    </div>
+
+    <div class="profile-container">
+        <div class="left-column">
+            <div class="transparent-panel">
+                <div class="profile-header">
+                    <img src="https://i.imgur.com/1eX8Vbh.png" alt="Profile Avatar" class="avatar">
+                    <div class="profile-info">
+                        <h1 class="username">Discord Giveaway Calculator</h1>
+                        <div class="status">
+                            <div class="status-dot"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="calculator-content">
+                    <h2 class="section-title">DISCORD GIVEAWAY CALCULATOR</h2>
+                    
+                    <p>Calculate your real odds of winning Discord giveaways. Whether you're entering standard giveaways or those with special requirements, this tool gives you the edge.</p>
+                    
+                    <form id="calculator-form">
+                        <div class="form-group">
+                            <label class="form-label">YOUR ACCOUNTS</label>
+                            <input type="number" id="accounts" class="form-input" value="1" min="1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">TOTAL PARTICIPANTS</label>
+                            <input type="number" id="participants" class="form-input" value="100" min="1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">NUMBER OF WINNERS</label>
+                            <input type="number" id="winners" class="form-input" value="1" min="1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">CALCULATION TYPE</label>
+                            <select id="calc-type" class="form-input">
+                                <option>Standard Giveaway</option>
+                                <option>With Invite Requirements</option>
+                                <option>With Message Requirements</option>
+                                <option>With Multiple Requirements</option>
+                            </select>
+                        </div>
+                        
+                        <button type="button" id="calculate-btn" class="neon-button">Calculate Odds</button>
+                    </form>
+                    
+                    <div id="results" style="margin-top: 20px; display: none;">
+                        <h3 class="section-title">RESULTS</h3>
+                        <div class="terminal-box" id="results-box">
+                            Calculating...
+                        </div>
+                    </div>
+                    
+                    <div class="warn-box">
+                        <strong>IMPORTANT:</strong> This tool is for educational purposes only. Only use on Discord servers you own or have explicit permission to test. Unauthorized testing may violate Discord's Terms of Service.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transparent-panel">
+                <h2 class="section-title">COMMAND LINE USAGE</h2>
+                
+                <p>Calculate giveaway odds:</p>
+                <div class="terminal-box">
+                    python giveaway_odds_calculator.py --accounts 5 --participants 100 --winners 2
+                </div>
+            </div>
+            
+            <div class="transparent-panel">
+                <h2 class="section-title">UNDERSTANDING DISCORD GIVEAWAYS</h2>
+                
+                <p>Most Discord giveaway bots use a random selection process, picking winners from users who have entered by clicking a reaction button or similar mechanism. This tool helps you understand your actual odds of winning based on the number of entrants and winners.</p>
+                
+                <p>When there are requirements (like having a certain number of invites or messages), the pool of eligible participants decreases, which can significantly affect your odds.</p>
+            </div>
+        </div>
+        
+        <div class="right-column">
+            <div class="tab-container">
+                <div class="tab active" data-tab="home">
+                    <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 13h-2v-6H7v6H5v-7.59l7-6.11 7 6.11V16h-2v-6h-3v6z"/></svg>
+                    Home
+                </div>
+                
+                <div class="tab" data-tab="howto">
+                    <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+                    How to Use
+                </div>
+                
+                <div class="tab" data-tab="download">
+                    <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Download
+                </div>
+            </div>
+            
+            <div class="content-section active" id="home-content">
+                <div class="transparent-panel">
+                    <h2 class="section-title">WELCOME</h2>
+                    
+                    <p>Discord Giveaway Calculator is a powerful tool that helps you calculate your real chances of winning Discord giveaways with various requirements.</p>
+                    
+                    <p>Use the calculator on the left to quickly determine your odds, or explore the other tabs to learn more about the tool.</p>
+                    
+                    <div class="terminal-box">
+                        Ready to calculate your odds? Use the form on the left to get started!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section" id="howto-content">
+                <div class="transparent-panel">
+                    <h2 class="section-title">HOW TO USE</h2>
+                    
+                    <ul class="step-list">
+                        <li class="step-item">
+                            <strong>Step 1:</strong> Enter the number of accounts you're entering with
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 2:</strong> Enter the total number of participants in the giveaway
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 3:</strong> Specify how many winners will be selected
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 4:</strong> Choose the calculation type based on giveaway requirements
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 5:</strong> Click "Calculate Odds" to see your chances of winning
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="transparent-panel">
+                    <h2 class="section-title">ADVANCED USAGE</h2>
+                    
+                    <p>For giveaways with invite requirements:</p>
+                    <ol style="padding-left: 20px; margin: 10px 0;">
+                        <li>Select "With Invite Requirements" from the dropdown</li>
+                        <li>The calculator will estimate how many other participants meet the requirements</li>
+                    </ol>
+                    
+                    <div class="warn-box">
+                        <strong>TIP:</strong> For the most accurate results, try to estimate the actual number of participants who meet all requirements, not just the total reaction count.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section" id="download-content">
+                <div class="transparent-panel">
+                    <h2 class="section-title">DOWNLOAD</h2>
+                    
+                    <p>Get the latest version of the Discord Giveaway Calculator:</p>
+                    
+                    <a href="https://github.com/user/discord-giveaway-calculator/releases/latest" class="neon-button" style="display: inline-block; margin-top: 15px; text-align: center;">
+                        Download Latest Version
+                    </a>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">SYSTEM REQUIREMENTS</label>
+                        <ul style="padding-left: 20px; margin: 10px 0;">
+                            <li>Python 3.6 or higher</li>
+                            <li>Windows, macOS, or Linux</li>
+                            <li>Internet connection for API features</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="transparent-panel">
+                    <h2 class="section-title">INSTALLATION</h2>
+                    
+                    <ul class="step-list">
+                        <li class="step-item">
+                            <strong>Step 1:</strong> Download the latest release from the link above
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 2:</strong> Extract the files to a folder of your choice
+                        </li>
+                        <li class="step-item">
+                            <strong>Step 3:</strong> Run the included <code>run_giveaway_odds.bat</code> file
+                        </li>
+                    </ul>
+                    
+                    <div class="terminal-box">
+                        # Manual installation
+                        pip install -r requirements.txt
+                        python giveaway_odds_calculator.py
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.getAttribute('data-tab');
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(tabId + '-content').classList.add('active');
+                });
+            });
+            
+            // Calculator functionality
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultsDiv = document.getElementById('results');
+            const resultsBox = document.getElementById('results-box');
+            
+            calculateBtn.addEventListener('click', function() {
+                const accounts = parseInt(document.getElementById('accounts').value) || 1;
+                const participants = parseInt(document.getElementById('participants').value) || 100;
+                const winners = parseInt(document.getElementById('winners').value) || 1;
+                const calcType = document.getElementById('calc-type').value;
+                
+                // Basic validation
+                if (accounts <= 0 || participants <= 0 || winners <= 0) {
+                    alert('Please enter positive numbers for all fields.');
+                    return;
+                }
+                
+                if (winners > participants) {
+                    alert('Number of winners cannot exceed total participants.');
+                    return;
+                }
+                
+                // Show loading overlay
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.classList.add('active');
+                document.getElementById('loading-message').textContent = 'Calculating odds...';
+                
+                // Simulate a calculation delay for better UX
+                setTimeout(() => {
+                    // Hide loading overlay
+                    loadingOverlay.classList.remove('active');
+                    
+                    // Calculate odds
+                    let odds = calculateOdds(accounts, participants, winners, calcType);
+                    
+                    // Display results
+                    resultsDiv.style.display = 'block';
+                    resultsBox.innerHTML = formatResults(accounts, participants, winners, calcType, odds);
+                }, 800);
+            });
+            
+            function calculateOdds(accounts, participants, winners, calcType) {
+                // Simple calculation for standard giveaway
+                let effectiveParticipants = participants;
+                let effectiveAccounts = accounts;
+                
+                // Adjust calculations based on type
+                switch(calcType) {
+                    case 'With Invite Requirements':
+                        // Assume 30% of participants meet invite requirements
+                        effectiveParticipants = Math.ceil(participants * 0.3);
+                        break;
+                    case 'With Message Requirements':
+                        // Assume 50% of participants meet message requirements
+                        effectiveParticipants = Math.ceil(participants * 0.5);
+                        break;
+                    case 'With Multiple Requirements':
+                        // Assume 15% of participants meet all requirements
+                        effectiveParticipants = Math.ceil(participants * 0.15);
+                        break;
+                }
+                
+                // Make sure we don't have more winners than effective participants
+                winners = Math.min(winners, effectiveParticipants);
+                
+                // Basic probability calculation
+                let probability = 1 - (1 - winners/effectiveParticipants) ** effectiveAccounts;
+                return probability * 100; // Convert to percentage
+            }
+            
+            function formatResults(accounts, participants, winners, calcType, odds) {
+                let result = `[CALCULATION RESULTS]\n\n`;
+                result += `Accounts: ${accounts}\n`;
+                result += `Total Participants: ${participants}\n`;
+                result += `Winners: ${winners}\n`;
+                result += `Calculation Type: ${calcType}\n\n`;
+                result += `Your odds of winning: ${odds.toFixed(4)}%\n`;
+                
+                if (calcType !== 'Standard Giveaway') {
+                    result += `\nNote: This calculation assumes certain percentages of participants meet the requirements.`;
+                }
+                
+                return result;
+            }
+        });
+    </script>
+</body>
+</html> 
